@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caixa Eletrônico - JavaScript</title>
+    <script>
+        // Mensagem de boas-vindas
+        var nome = prompt("Digite seu nome:");
+        alert("Olá " + nome + ", é um prazer ter você aqui!");
+
+        // Variáveis globais
+        var saldo = 100.5; // Float (Número com ponto flutuante)
+        var extrato = [
+            "Depósito inicial: R$ 1000.00",
+            "Compra Supermercado: R$ -150.00",
+            "Compra Farmácia: R$ -45.00",
+            "Depósito PIX: R$ 200.00"
+        ];
+        var senhaCorreta = "3589";
+
+        // Função para validar a senha
+        function validar_senha() {
+            var senhaDigitada = prompt("Informe a sua senha:");
+            if (senhaDigitada === senhaCorreta) {
+                return true;
+            } else {
+                alert("Senha incorreta! Operação não autorizada.");
+                inicio();
+                return false;
+            }
+        }
+
+        /* Função principal com o menu */
+        function inicio() {
+            var escolha = parseInt(prompt('Selecione uma opção:\n1.) Saldo\n2.) Extrato\n3.) Saque\n4.) Depósito\n5.) Transferência\n6.) Sair'));
+
+            switch (escolha) {
+                case 1:
+                    ver_saldo();
+                    break;
+                case 2:
+                    ver_extrato();
+                    break;
+                case 3:
+                    fazer_saque();
+                    break;
+                case 4:
+                    fazer_deposito();
+                    break;
+                case 5:
+                    fazer_transferencia();
+                    break;
+                case 6:
+                    sair();
+                    break;
+                default:
+                    erro();
+                    break;
+            }
+        }
+
+        /* Função para visualizar o saldo. */
+        function ver_saldo() {
+            if (!validar_senha()) return;
+
+            alert('Seu saldo atual é: R$ ' + saldo.toFixed(2));
+            inicio();
+        }
+
+        /* Função para exibir o extrato de movimentações. */
+        function ver_extrato() {
+            if (!validar_senha()) return;
+
+            if (extrato.length === 0) {
+                alert('Não há movimentações registradas no extrato.');
+            } else {
+                var historicoTexto = "=== EXTRATO BANCÁRIO ===\n\n" + 
+                                     extrato.join('\n') + 
+                                     "\n\nSaldo atual: R$ " + saldo.toFixed(2);
+                alert(historicoTexto);
+            }
+            inicio();
+        }
+
+        /* Função para fazer saque */
+        function fazer_saque() {
+            if (!validar_senha()) return;
+
+            var saque = parseFloat(prompt('Qual o valor para saque?'));
+
+            if (isNaN(saque) || saque === '') {
+                alert('Por favor, informe um número:');
+                fazer_saque();
+            } else if (saque <= 0 || saque > saldo) {
+                alert('Operação não autorizada');
+                ver_saldo();
+            } else {
+                saldo -= saque;
+                extrato.push('Saque: R$ -' + saque.toFixed(2));
+                ver_saldo();
+            }
+        }
+
+        /* Função para fazer depósito (Não exige senha conforme o requisito) */
+        function fazer_deposito() {
+            var deposito = parseFloat(prompt('Qual o valor para depósito?')); 
+
+            if (isNaN(deposito) || deposito === '') {
+                alert('Por favor, informe um número:');
+                fazer_deposito();
+            } else if (deposito <= 0) {
+                alert('Por favor, informe um número para depósito maior que zero.');
+                fazer_deposito();
+            } else {
+                saldo += deposito;
+                extrato.push('Depósito: R$ ' + deposito.toFixed(2));
+                ver_saldo();
+            }
+        }
+
+        /* Função para fazer transferência */
+        function fazer_transferencia() {
+            if (!validar_senha()) return;
+
+            var conta = prompt('Informe o número da conta de destino (apenas números):');
+
+            var numConta = parseInt(conta);
+
+            if (conta === null || conta.trim() === '' || isNaN(numConta) || String(numConta) !== conta.trim()) {
+                alert('Por favor, informe um número de conta válido (somente números inteiros).');
+                fazer_transferencia();
+            } else {
+                var valorTransferencia = parseFloat(prompt('Qual o valor que deseja transferir?'));
+
+                if (isNaN(valorTransferencia) || valorTransferencia <= 0) {
+                    alert('Por favor, informe um valor válido para transferência.');
+                    fazer_transferencia();
+                } else if (valorTransferencia > saldo) {
+                    alert('Operação não autorizada');
+                    ver_saldo();
+                } else {
+                    saldo -= valorTransferencia;
+                    extrato.push('Transferência para conta ' + conta + ': R$ -' + valorTransferencia.toFixed(2));
+                    alert('Transferência realizada com sucesso!');
+                    ver_saldo();
+                }
+            }
+        }
+
+        /* Função de erro com as opções de 1 a 6 */
+        function erro() {
+            alert('Por favor, informe um número entre 1 e 6.');
+            inicio();
+        }
+
+        /* Função para sair com mensagem personalizada */
+        function sair() {
+            var confirma = confirm('Você deseja sair?');
+            if (confirma) {
+                alert(nome + ', foi um prazer ter você por aqui!');
+                window.close();
+            } else {
+                inicio();
+            }
+        }
+
+        // Executa o programa ao carregar
+        inicio();
+    </script>
+</head>
+<body>
+
+</body>
+</html>
